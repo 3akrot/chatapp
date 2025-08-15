@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ai.zencoder.plugin.chat.index">
+    <option name="activeChatId" value="314ba8ed-6558-40d6-8d8a-b4e671477fb0" />
+    <option name="chatMetadata" value="{&quot;314ba8ed-6558-40d6-8d8a-b4e671477fb0&quot;:{&quot;id&quot;:&quot;314ba8ed-6558-40d6-8d8a-b4e671477fb0&quot;,&quot;title&quot;:&quot;React Component Creation Assistance&quot;,&quot;createdAt&quot;:1755245706594,&quot;updatedAt&quot;:1755258983804,&quot;isAgent&quot;:true,&quot;isNameGenerated&quot;:true,&quot;messageCount&quot;:4,&quot;lastMessagePreview&quot;:&quot;Absolutely! DaisyUI's color system can be confusing at first, but once you understand the pattern, i...&quot;},&quot;0bb96b0f-611d-4857-97b7-0cd423d668db&quot;:{&quot;id&quot;:&quot;0bb96b0f-611d-4857-97b7-0cd423d668db&quot;,&quot;title&quot;:&quot;Chatty Landing Page Development&quot;,&quot;createdAt&quot;:1755243076470,&quot;updatedAt&quot;:1755245252228,&quot;isAgent&quot;:true,&quot;isNameGenerated&quot;:true,&quot;messageCount&quot;:5,&quot;lastMessagePreview&quot;:&quot;Perfect! Capacitor is the best choice for your needs. It will wrap your existing React app in a nati...&quot;}}" />
+  </component>
+</project>

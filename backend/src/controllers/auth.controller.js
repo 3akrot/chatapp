@@ -31,8 +31,9 @@ export const signup = async (req, res) => {
     
 
     if (newUser) {
-        generateToken(newUser._id,res)
         await newUser.save()
+
+        generateToken(newUser._id,res)
         res.status(201).json({id:newUser._id,email:newUser.email,fullName:newUser.fullName,profilePic:newUser.profilePic})
     } else {
       res.status(400).json({ message: "Invalid user data" });
@@ -84,12 +85,13 @@ try {
     const userId = req.user._id
     if(!profilePic)
         return res.status(400).json({message:"no profile pic"})
-    const uplodaresponese = await cloudinary.uploader.upload(profilePic)
-    const updatedUser = await User.findByIdAndUpdate(userId,{profilePic:uplodaresponese.secure_url},{new:true})
+    const url = await cloudinary.uploader.upload(profilePic)
+    const updatedUser = await User.findByIdAndUpdate(userId,{profilePic:url.secure_url},{new:true})
     res.status(200).json(updatedUser)
 }
 catch (e){
-    console.log("error in update profile",e.message)
+
+    console.log("error in update profile",e.message,e)
     return res.status(500).json({message:"Internal Server Error"})
 
 
