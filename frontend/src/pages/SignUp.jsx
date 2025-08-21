@@ -67,12 +67,12 @@ export const SignUp = () => {
                                 <span className="label-text font-medium">Full Name</span>
                             </label>
                             <div className="relative">
-                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center z-1 pointer-events-none">
+                                <div className="absolute z-30 inset-y-0 left-0 pl-3 flex items-center z-1 pointer-events-none">
                                     <User className="size-5 text-base-content/40" />
                                 </div>
                                 <input
                                     type="text"
-                                    className={`focus:-z-10  input input-bordered w-full pl-10`}
+                                    className={`focus:z-10  input input-bordered w-full pl-10`}
                                     placeholder="John Doe"
                                     value={formData.fullName}
                                     onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
@@ -87,12 +87,12 @@ export const SignUp = () => {
                                     <input
                                         autoComplete={'on'}
                                         type="email"
-                                        className={`input focus:-z-10 input-bordered w-full pl-10`}
+                                        className={`input focus:z-10 input-bordered w-full pl-10`}
                                         placeholder="you@email.com"
                                         value={formData.email}
                                         onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                                     />
-                                    <div className=" absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <div className=" absolute z-20 inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                         <Mail className="size-5 text-base-content/40" />
                                     </div>
 
@@ -103,12 +103,12 @@ export const SignUp = () => {
                                         <span className="label-text font-medium">Password</span>
                                     </label>
                                     <div className="relative">
-                                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center z-1 pointer-events-none">
+                                        <div className="absolute z-20 inset-y-0 left-0 pl-3 flex items-center  pointer-events-none">
                                             <Lock className="size-5 text-base-content/40" />
                                         </div>
                                         <input
                                             type={showPassword ? 'text' : 'password'}
-                                            className={`focus:-z-10  input input-bordered w-full pl-10`}
+                                            className={`focus:z-10  input input-bordered w-full pl-10`}
                                             placeholder="Your Password"
                                             value={formData.password}
                                             onChange={(e) => setFormData({ ...formData, password: e.target.value })}

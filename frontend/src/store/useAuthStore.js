@@ -34,6 +34,7 @@ export const useAuthStore = create((set)=>({
             if(res.status === 201) {
                 set({authUser: res.data})
                 set({signUpError:null})
+                sessionStorage.setItem('token',res.data.token)
                 toast.success("account created")
             }
             else {
@@ -56,11 +57,14 @@ export const useAuthStore = create((set)=>({
         try{
             set({isLoggingIn:true})
              const res = await axiosInstance.post('auth/login',data)
+            console.log(res.data,'auth user from login')
                 set({authUser:res.data})
+                sessionStorage.setItem('token',res.data.token)
+
             toast.success("logged In")
         }
         catch (e){
-            toast.error(e.response.data.message)
+            toast.error(e.message)
         }
         finally {
             set({isLoggingIn:false})
@@ -69,6 +73,7 @@ export const useAuthStore = create((set)=>({
     logOut:async ()=>{
         try{
             await axiosInstance.post("auth/logout")
+            sessionStorage.clear()
             set({authUser:null})
             toast.success("logged out")
         }

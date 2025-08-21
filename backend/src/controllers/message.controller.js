@@ -1,6 +1,7 @@
 import User from "../models/user.model.js";
 import Message from "../models/message.model.js";
 import cloudinary from "../lib/cloudinary.js";
+import mongoose from "mongoose";
 export const getUsersForSidebar = async (req, res) => {
   try {
     const loggedInUserid = req.user._id;
@@ -41,27 +42,49 @@ export const getMessages = async (req, res) => {
 };
 
 export const sendMessage = async (req, res) => {
-    try {
-        const {text , image} = req.body;
-        const senderId = req.user._id;
-        const {id:recipientId} = req.params;
-        let imageurl;
-        if(image){
-            const uploadResponse = await cloudinary.uploader.upload(image)
-            imageurl = uploadResponse.secure_url
-        }
-        const newMessage = new Message({
-            text,
-            image:imageurl,
-            senderId:senderId,
-            reciverId:recipientId,
-        })
-        await newMessage.save();
-        res.status(200).json(newMessage);
-        //TODO SOCEKT IO
-    }
-    catch(e){
-        console.log("error in message controller sendMessage",e.message)
-    }
+  try {
+    const { text, image } = req.body;
+    const senderId = req.user._id;
+    const { id: reciverId } = req.params;
 
+    // Do NOT store base64 in DB; create message with placeholder image
+    const newMessage = new Message({
+      text,
+      image: null,
+      senderId,
+      reciverId,
+    });
+
+    const saved = await newMessage.save();
+
+    // Respond immediately so UI can be fast/optimistic
+    res.status(201).json(saved);
+
+    // Upload image asynchronously and update message when done
+    if (image) {
+      (async () => {
+        try {
+          const uploadResponse = await cloudinary.uploader.upload(image);
+          const imageurl = uploadResponse.secure_url;
+
+          await Message.updateOne(
+            { _id: saved._id },
+            { $set: { image: imageurl } }
+          );
+
+          // Optionally notify clients (Socket.IO) that message image is ready
+          // const io = req.app.get('io');
+          // if (io) io.to(String(reciverId)).emit('message:updated', { _id: saved._id, image: imageurl });
+        } catch (err) {
+          console.log('Image upload failed', err.message);
+          // Optionally mark failure or notify sender
+          // const io = req.app.get('io');
+          // if (io) io.to(String(senderId)).emit('message:uploadFailed', { _id: saved._id });
+        }
+      })();
+    }
+  } catch (e) {
+    console.log('error in message controller sendMessage', e.message);
+    res.status(500).json({ message: e.message });
+  }
 }

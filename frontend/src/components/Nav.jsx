@@ -1,9 +1,18 @@
-import { Link } from "react-router-dom";
+import { Link ,useLocation} from "react-router-dom";
 import { useAuthStore } from "../store/useAuthStore";
+import { useChatStore } from "../store/useChatStore";
 import { LogOut, MessageSquare, Settings, User } from "lucide-react";
 
 export const Nav = () => {
     const { logOut, authUser } = useAuthStore();
+    const location = useLocation()
+    const { reset } = useChatStore();
+
+    // useEffect(() => {
+    // setpath(window.location.pathname)
+    //     setpath(location.pathname)
+    // }, [location.pathname]);
+
 
     return (
         <header
@@ -39,8 +48,22 @@ export const Nav = () => {
                                     <User className="size-5" />
                                     <span className="hidden sm:inline">Profile</span>
                                 </Link>
+                                {true? (
+                                    <Link to={"/"} className={`btn btn-sm gap-2`}>
+                                        <MessageSquare className="size-5" />
+                                        <span className="hidden sm:inline">Chats</span>
+                                    </Link>
+                                ) : null}
 
-                                <button className="flex gap-2 items-center" onClick={logOut}>
+
+                                <button
+                                    className="flex btn btn-soft btn-sm gap-2 items-center"
+                                    onClick={async () => {
+                                        // Clear chat state before logging out
+                                        reset();
+                                        await logOut();
+                                    }}
+                                >
                                     <LogOut className="size-5" />
                                     <span className="hidden sm:inline">Logout</span>
                                 </button>

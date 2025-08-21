@@ -16,7 +16,7 @@ const userSchema = new mongoose.Schema({
     },
     profilePic: {
         type: String,
-        default: "",
+        default: "/avatar.png",
     },
 },{timestamps: true});
 const User = mongoose.model("User", userSchema);

@@ -32,9 +32,7 @@ export const signup = async (req, res) => {
 
     if (newUser) {
         await newUser.save()
-
-        generateToken(newUser._id,res)
-        res.status(201).json({id:newUser._id,email:newUser.email,fullName:newUser.fullName,profilePic:newUser.profilePic})
+        res.status(201).json({token:generateToken(newUser._id),_id:newUser._id,email:newUser.email,fullName:newUser.fullName,profilePic:newUser.profilePic})
     } else {
       res.status(400).json({ message: "Invalid user data" });
     }
@@ -58,8 +56,7 @@ export const login = async (req, res) => {
     if(!correct){
         return res.status(400).json({message:"Invalid Email or Pasword"})
     }
-    generateToken(existingUser.id,res)
-    return res.status(200).json({id:existingUser._id,email:existingUser.email,fullName:existingUser.fullName,profilePic:existingUser.profilePic})
+    return res.status(200).json({token:generateToken(existingUser.id),_id:existingUser._id,email:existingUser.email,fullName:existingUser.fullName,profilePic:existingUser.profilePic})
   }
   catch (e) {
     console.log("error in login controller" , e.message)

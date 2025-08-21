@@ -1,38 +1,45 @@
-import { useState, useRef, useEffect } from "react";
+import {  useRef, useEffect } from "react";
 import { useChatStore } from "../store/useChatStore.js";
-import { Send, MoreVertical } from "lucide-react";
+import {Send, MoreVertical, Paperclip, ImageIcon, XSquare} from "lucide-react";
+import {useAuthStore} from "../store/useAuthStore.js";
+import {ChatMessagecomponent} from "./ChatMessagecomponent.jsx";
+import {Cancel} from "axios";
+import {MessageInput} from "./MessageInput.jsx";
+import {MessageSkelton} from "./MessageSkelton.jsx";
 
 export const ChatComponent = () => {
-    const [newMessage, setNewMessage] = useState("");
+
+    const {authUser} = useAuthStore()
     const messagesEndRef = useRef(null);
-    const { 
-        selectedUser, 
+    const {
+        setSelectedUser,
+        selectedUser,
         messages, 
-        sendMessage, 
-        isMessagesLoading 
+        isgettingUserMessages,
+        getMessages,
     } = useChatStore();
 
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     };
 
+    // inside ChatComponent
+
+// 1) Fetch when selected user changes (not just once)
     useEffect(() => {
-        scrollToBottom();
-    }, [messages]);
+        if (!selectedUser?._id) return;
+        getMessages(selectedUser._id);
+    }, [selectedUser?._id, getMessages]);
 
-    const handleSendMessage = async (e) => {
-        e.preventDefault();
-        if (!newMessage.trim()) return;
+// 2) Scroll after messages are rendered
+    useEffect(() => {
+        if (isgettingUserMessages) return; // wait until loading finishes
+        // Ensures it runs after DOM paint
+        requestAnimationFrame(() => {setTimeout(scrollToBottom,10)});
+    }, [messages, isgettingUserMessages]);
 
-        try {
-            await sendMessage(newMessage);
-            setNewMessage("");
-        } catch (error) {
-            console.error("Failed to send message:", error);
-        }
-    };
 
-    if (!selectedUser) return null;
+
 
     return (
         <div className="flex-1 flex flex-col">
@@ -42,7 +49,7 @@ export const ChatComponent = () => {
                     <div className="avatar">
                         <div className="w-10 rounded-full">
                             <img
-                                src={selectedUser.profilePic || "/avatar-placeholder.png"}
+                                src={selectedUser.profilePic || "/avatar.png"}
                                 alt={selectedUser.fullName}
                             />
                         </div>
@@ -54,68 +61,28 @@ export const ChatComponent = () => {
                         </div>
                     </div>
                 </div>
-                <button className="btn btn-ghost btn-sm">
-                    <MoreVertical size={20} />
+                <button onClick={()=>{
+                    setSelectedUser(null);
+                }} className="btn btn-ghost btn-sm">
+                    <XSquare></XSquare>
                 </button>
             </div>
 
             {/* Messages */}
             <div className="flex-1 overflow-y-auto p-4 space-y-4">
-                {isMessagesLoading ? (
-                    <div className="flex items-center justify-center h-32">
-                        <span className="loading loading-spinner loading-md"></span>
-                    </div>
+                {isgettingUserMessages ? (
+                    <MessageSkelton></MessageSkelton>
                 ) : (
                     <>
                         {messages.map((message) => (
-                            <div
-                                key={message._id}
-                                className={`flex ${
-                                    message.senderId === selectedUser._id ? "justify-start" : "justify-end"
-                                }`}
-                            >
-                                <div
-                                    className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
-                                        message.senderId === selectedUser._id
-                                            ? "bg-base-200 text-base-content"
-                                            : "bg-primary text-primary-content"
-                                    }`}
-                                >
-                                    <p>{message.text}</p>
-                                    <div className="text-xs opacity-70 mt-1">
-                                        {new Date(message.createdAt).toLocaleTimeString([], {
-                                            hour: '2-digit',
-                                            minute: '2-digit'
-                                        })}
-                                    </div>
-                                </div>
-                            </div>
+                            <ChatMessagecomponent key={message.id} {...{...message,authUser,selectedUser}} />
                         ))}
                         <div ref={messagesEndRef} />
                     </>
                 )}
             </div>
 
-            {/* Message Input */}
-            <div className="p-4 border-t border-base-300">
-                <form onSubmit={handleSendMessage} className="flex gap-2">
-                    <input
-                        type="text"
-                        value={newMessage}
-                        onChange={(e) => setNewMessage(e.target.value)}
-                        placeholder="Type a message..."
-                        className="input input-bordered flex-1"
-                        disabled={isMessagesLoading}
-                    />
-                    <button
-                        type="submit"
-                        className="btn btn-primary"
-                        disabled={!newMessage.trim() || isMessagesLoading}
-                    >
-                        <Send size={20} />
-                    </button>
-                </form>
-            </div>
+            <MessageInput></MessageInput>
         </div>
     );
 };

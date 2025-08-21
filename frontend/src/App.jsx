@@ -29,10 +29,12 @@ const {theme} = useThemeStore()
        {/* Only show Nav for authenticated routes */}
        {<Nav/>}
        <Routes>
+           {/* When authUser becomes null (e.g., 401), this will render <Landing/> */}
            <Route path={'/'} element={authUser ? <Home/> : <Landing/>}></Route>
            <Route path={'/login'} element={!authUser ? <Login/> : <Navigate to={'/'} replace={true}/>}></Route>
            <Route path={'/signup'} element={!authUser ? <SignUp/> : <Navigate to={'/'} replace={true}/>}></Route>
            <Route path={'/settings'} element={<Setting/>}></Route>
+           {/* Protect profile: push to login instantly if authUser cleared by interceptor */}
            <Route path={'/profile'} element={!authUser ? <Navigate to={'/login'} replace={true}/> : <Profile/>}></Route>
        </Routes>
        <Toaster/>
