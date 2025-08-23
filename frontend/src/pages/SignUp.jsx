@@ -22,12 +22,10 @@ export const SignUp = () => {
 
         return true;
     };
-    console.log(authUser)
+
     if(signUpError){
         toast(signUpError)
-        console.log(signUpError)
     }
-    console.log(signUpError)
 
     const handleSubmit = async (e) => {
         e.preventDefault();

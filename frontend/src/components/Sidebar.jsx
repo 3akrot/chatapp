@@ -2,17 +2,18 @@ import { useChatStore } from "../store/useChatStore.js";
 import {Users} from 'lucide-react'
 import {useEffect, useState} from "react";
 import {SidebarSkelton} from "./SidebarSkelton.jsx";
+import {useAuthStore} from "../store/useAuthStore.js";
 
 
 
 export const Sidebar = () => {
-    const {users,getUsers,isgettingUsers,selectedUser,setSelectedUser,onlineUsers} = useChatStore();
+    const {users,getUsers,isgettingUsers,selectedUser,setSelectedUser} = useChatStore();
+    const {onlineUsers} = useAuthStore()
     const [showOnlineOnly,setshowOnlineOnly] = useState(false);
+
     useEffect(  ()=>{
         (async ()=>{
             await getUsers();
-
-
         })()
 
 
@@ -30,6 +31,12 @@ export const Sidebar = () => {
 
             </div>
             <div className="overflow-y-auto w-full py-3">
+                <div className="p-3 max-lg:text-center lg:p-5 bg-base-100 flex flex-wrap max-lg:justify-center gap-4 " onClick={()=>{setshowOnlineOnly(!showOnlineOnly)}}>
+                <input type="checkbox" onChange={()=>{
+                    
+                }}  checked={showOnlineOnly} name="online" id="" />
+                show online only
+                </div>
                 {filteredUseres.map((user) => (
                     <button
                         key={user._id}

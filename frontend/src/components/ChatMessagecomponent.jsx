@@ -1,15 +1,16 @@
 export const ChatMessagecomponent = ({senderId,text,image,createdAt,selectedUser,authUser}) => {
     const send = senderId === authUser._id;
-    console.log('auth user from chat',authUser)
+    const userProfile = send ? authUser : selectedUser;
+
     return (
-        <div
+        <div 
             className={` chat ${send ? "chat-end" : "chat-start"}`}
         >
             <div className="chat-image avatar">
                 <div className="w-10 rounded-full">
                     <img
                         alt="Tailwind CSS chat bubble component"
-                        src={senderId === selectedUser._id ? selectedUser.profilePic  ? selectedUser.profilePic : "/avatar.png": authUser.profilePic ? authUser.profilePic : "/avatar.png"}
+                        src={userProfile.profilePic || "/avatar.png"}
                     />
                 </div>
             </div>
@@ -29,4 +30,3 @@ export const ChatMessagecomponent = ({senderId,text,image,createdAt,selectedUser
         </div>
     )
 }
-

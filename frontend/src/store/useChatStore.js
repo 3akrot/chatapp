@@ -1,6 +1,7 @@
 import {create} from 'zustand'
 import {axiosInstance} from "../lib/axios.js";
 import toast  from "react-hot-toast";
+import { socket } from './useAuthStore.js';
 export  const useChatStore = create((set,getState)=>({
     messages:[],
     onlineUsers:[],
@@ -20,7 +21,7 @@ export  const useChatStore = create((set,getState)=>({
 
         }
         catch (e){
-            console.log(e.response.data.message)
+            console.log(e.message)
         }
         finally {
             set({isgettingUsers:false})
@@ -36,7 +37,7 @@ export  const useChatStore = create((set,getState)=>({
             set({messages:[...getState().messages,{...req.data,image : img64 ? img64 : ''}]})
 
         }catch (e){
-            console.log("Error sending message",e.message)
+            console.log(e.message)
         }
         finally {
             toast.dismiss(toastId);
@@ -49,11 +50,22 @@ export  const useChatStore = create((set,getState)=>({
             set({messages:req.data})
         }
         catch (e){
-            console.log(e.response.message)
+            console.log("error getting messages",e.message)
         }
         finally {
             set({isgettingUserMessages:false})
         }
+    },
+    subscribe:()=>{
+        if(!getState().selectedUser) return
+        socket.on("message",(message)=>{
+            if(getState().selectedUser._id !== message.senderId)
+                return
+            set({messages:[...getState().messages,message]})
+        })
+    },
+    unsubscribe:()=>{
+        socket.off("message")
     },
     // Reset chat state (used on logout)
     reset: () => {

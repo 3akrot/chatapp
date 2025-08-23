@@ -32,14 +32,14 @@ export const signup = async (req, res) => {
 
     if (newUser) {
         await newUser.save()
-        res.status(201).json({token:generateToken(newUser._id),_id:newUser._id,email:newUser.email,fullName:newUser.fullName,profilePic:newUser.profilePic})
+        generateToken(newUser._id,res)
+        res.status(201).json({_id:newUser._id,email:newUser.email,fullName:newUser.fullName,profilePic:newUser.profilePic})
     } else {
       res.status(400).json({ message: "Invalid user data" });
     }
 
 
   } catch (e){
-    console.log("error in signup controller" , e.message)
     res.status(500).json({message:"Internal Server Error"})
   }
 };
@@ -56,10 +56,10 @@ export const login = async (req, res) => {
     if(!correct){
         return res.status(400).json({message:"Invalid Email or Pasword"})
     }
-    return res.status(200).json({token:generateToken(existingUser.id),_id:existingUser._id,email:existingUser.email,fullName:existingUser.fullName,profilePic:existingUser.profilePic})
+    generateToken(existingUser._id,res)
+    return res.status(200).json({_id:existingUser._id,email:existingUser.email,fullName:existingUser.fullName,profilePic:existingUser.profilePic})
   }
   catch (e) {
-    console.log("error in login controller" , e.message)
     res.status(500).json({message:"Internal Server Error"})
   }
 };
@@ -69,7 +69,6 @@ export const logout = async (req, res) => {
     res.status(200).json({message:"Loged out !"})
   }
   catch (e) {
-    console.log("error in logout controller" , e.message)
     res.status(500).json({message:"Internal Server Error"})
   }
 };
@@ -87,11 +86,7 @@ try {
     res.status(200).json(updatedUser)
 }
 catch (e){
-
-    console.log("error in update profile",e.message,e)
     return res.status(500).json({message:"Internal Server Error"})
-
-
 }
 }
 
@@ -100,9 +95,6 @@ export const checkAuth = async (req,res)=>{
         return res.status(200).json(req.user)
     }
     catch (e){
-    console.log("error in check auth",e.message)
     return res.status(500).json({message:"Internal Server Error"})
-
-
 }
 }

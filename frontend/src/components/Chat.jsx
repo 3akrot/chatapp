@@ -17,8 +17,12 @@ export const ChatComponent = () => {
         messages, 
         isgettingUserMessages,
         getMessages,
+        subscribe,
+        unsubscribe,
+        
     } = useChatStore();
 
+    const {onlineUsers} = useAuthStore()
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     };
@@ -29,13 +33,18 @@ export const ChatComponent = () => {
     useEffect(() => {
         if (!selectedUser?._id) return;
         getMessages(selectedUser._id);
-    }, [selectedUser?._id, getMessages]);
+        subscribe()
+        return ()=>{
+            console.log("unsubscriped")
+            unsubscribe()
+        }
+    }, [selectedUser?._id,getMessages,subscribe,unsubscribe]);
 
 // 2) Scroll after messages are rendered
     useEffect(() => {
         if (isgettingUserMessages) return; // wait until loading finishes
         // Ensures it runs after DOM paint
-        requestAnimationFrame(() => {setTimeout(scrollToBottom,10)});
+        requestAnimationFrame(scrollToBottom);
     }, [messages, isgettingUserMessages]);
 
 
@@ -57,7 +66,7 @@ export const ChatComponent = () => {
                     <div className="ml-3">
                         <div className="font-medium">{selectedUser.fullName}</div>
                         <div className="text-sm text-base-content/70">
-                            {selectedUser.isOnline ? "Online" : "Offline"}
+                            {onlineUsers.includes(selectedUser._id)  ? "Online" : "Offline"}
                         </div>
                     </div>
                 </div>
@@ -75,7 +84,7 @@ export const ChatComponent = () => {
                 ) : (
                     <>
                         {messages.map((message) => (
-                            <ChatMessagecomponent key={message.id} {...{...message,authUser,selectedUser}} />
+                            <ChatMessagecomponent key={message._id} {...{...message,authUser,selectedUser}} />
                         ))}
                         <div ref={messagesEndRef} />
                     </>
