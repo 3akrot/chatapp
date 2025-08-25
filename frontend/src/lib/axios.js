@@ -1,7 +1,7 @@
 import axios  from "axios";
 import { useAuthStore } from '../store/useAuthStore'
 import { useChatStore } from '../store/useChatStore'
-export const axiosInstance = axios.create({baseURL:'http://localhost:5001/api',withCredentials:true})
+export const axiosInstance = axios.create({baseURL: import.meta.env.MODE === 'production' ? '/api':'http://localhost:5001/api',withCredentials:true})
 
 axiosInstance.interceptors.response.use(
     (response) => response,

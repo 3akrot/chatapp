@@ -3,7 +3,7 @@ import io from "socket.io-client";
 import { axiosInstance } from "../lib/axios.js";
 import toast from "react-hot-toast";
 import { useChatStore } from "./useChatStore.js";
-const BASE_URL = "http://localhost:5001";
+const BASE_URL = import.meta.env.MODE === 'production' ? "/" :"http://localhost:5001";
 export const socket = io(BASE_URL,{autoConnect:false});
 
 
